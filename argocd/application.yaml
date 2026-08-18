@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: demo-project
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/arifhossen/k8s-gitops
+    targetRevision: main
+    path: k8s
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    # Namespaces are declared per-service in git (backend / frontend).
+    # This is only the fallback for resources that omit a namespace.
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
